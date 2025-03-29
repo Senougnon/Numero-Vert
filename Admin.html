@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Numéros Utiles</title>
+    <link rel="icon" href="logo.png" type="image/png">
+    <style>
+        /* --- Reset & Base --- */
+        :root {
+            --admin-primary: #1976d2; /* Bleu primaire */
+            --admin-secondary: #f57c00; /* Orange */
+            --admin-background: #e3f2fd; /* Bleu très clair */
+            --admin-card-bg: #ffffff;
+            --admin-text-dark: #212121;
+            --admin-text-medium: #616161;
+            --admin-border: #bdbdbd;
+            --admin-success: #388e3c;
+            --admin-error: #d32f2f;
+            --admin-success-bg: #e8f5e9;
+            --admin-error-bg: #ffebee;
+            --admin-shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            background-color: var(--admin-background);
+            color: var(--admin-text-dark);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+         /* --- Header --- */
+        header {
+            background: linear-gradient(135deg, var(--admin-primary), #0d47a1);
+            color: white;
+            padding: 18px 15px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 6px var(--admin-shadow);
+        }
+
+        header h1 {
+            font-size: 1.7em;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        main {
+             width: 100%;
+             max-width: 800px; /* Limite la largeur sur desktop */
+             margin: 0 auto; /* Centre le contenu */
+        }
+
+        /* --- Section Styling --- */
+        .admin-section {
+             background-color: var(--admin-card-bg);
+             padding: 20px;
+             border-radius: 10px;
+             box-shadow: 0 2px 8px var(--admin-shadow);
+             margin-bottom: 25px;
+             border: 1px solid #e0e0e0;
+        }
+
+        .admin-section h2 {
+            font-size: 1.4em;
+            color: var(--admin-primary);
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--admin-primary);
+            font-weight: 600;
+        }
+
+        /* --- Form Styling --- */
+        #add-edit-form label, #info-banner-form label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: var(--admin-text-medium);
+            font-size: 0.95em;
+        }
+
+        #add-edit-form input[type="text"],
+        #add-edit-form input[type="tel"],
+        #add-edit-form textarea,
+        #info-banner-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 1px solid var(--admin-border);
+            border-radius: 6px;
+            font-size: 1em;
+            background-color: #f9f9f9;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        #add-edit-form input:focus,
+        #add-edit-form textarea:focus,
+        #info-banner-form textarea:focus {
+             border-color: var(--admin-primary);
+             box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+             outline: none;
+             background-color: var(--admin-card-bg);
+        }
+
+         #add-edit-form textarea,
+         #info-banner-form textarea {
+             resize: vertical; /* Permet redimensionnement vertical */
+             min-height: 80px;
+         }
+
+         /* --- Button Styling --- */
+         .form-buttons button, #save-banner-btn {
+            background-color: var(--admin-primary);
+            color: white;
+            padding: 10px 22px;
+            border: none;
+            border-radius: 20px; /* Boutons pilule */
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            margin-right: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+         }
+
+         .form-buttons button:hover, #save-banner-btn:hover {
+            background-color: #1565c0; /* Bleu plus foncé */
+         }
+         .form-buttons button:active, #save-banner-btn:active {
+             transform: scale(0.98);
+         }
+
+         #cancel-edit-btn {
+             background-color: #757575; /* Gris */
+         }
+          #cancel-edit-btn:hover {
+             background-color: #616161;
+         }
+
+        /* --- Admin List Styling --- */
+        #admin-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .admin-list-item {
+            background-color: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column; /* Mobile first */
+            gap: 10px;
+        }
+
+        .item-info .name {
+            font-weight: bold;
+            color: var(--admin-text-dark);
+            font-size: 1.1em;
+            margin-bottom: 3px;
+        }
+        .item-info .number {
+            color: var(--admin-primary);
+            font-weight: 500;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.05em;
+        }
+        .item-info .description {
+            color: var(--admin-text-medium);
+            font-size: 0.9em;
+            line-height: 1.4;
+            max-width: 100%; /* Empêcher le débordement */
+            word-wrap: break-word; /* Couper les mots longs si nécessaire */
+        }
+
+
+         .item-actions {
+             display: flex;
+             gap: 10px; /* Espace entre les boutons d'action */
+             margin-top: 10px; /* Espace au-dessus des boutons sur mobile */
+             flex-wrap: wrap; /* Permettre aux boutons de passer à la ligne */
+         }
+
+        .admin-list-item button {
+            padding: 7px 15px;
+            font-size: 0.9em;
+            border-radius: 15px; /* Pilule */
+            cursor: pointer;
+            border: none;
+            color: white;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .admin-list-item button:active {
+            transform: scale(0.97);
+        }
+
+        .edit-btn {
+            background-color: var(--admin-secondary); /* Orange */
+            color: white;
+        }
+        .edit-btn:hover {
+            background-color: #ef6c00; /* Orange plus foncé */
+        }
+
+        .delete-btn {
+            background-color: var(--admin-error); /* Rouge danger */
+        }
+         .delete-btn:hover {
+            background-color: #c62828; /* Rouge plus foncé */
+         }
+
+        /* --- Status Message Styling --- */
+        #status-message, #banner-status-message {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 500;
+            display: none; /* Caché par défaut */
+            border: 1px solid transparent;
+            font-size: 0.95em;
+        }
+        .status-message.success {
+            background-color: var(--admin-success-bg);
+            color: var(--admin-success);
+            border-color: #a5d6a7;
+        }
+         .status-message.error {
+            background-color: var(--admin-error-bg);
+            color: var(--admin-error);
+            border-color: #ef9a9a;
+         }
+
+        /* --- Loading/No Data --- */
+        #admin-loading, #admin-no-data {
+            text-align: center;
+            padding: 30px;
+            font-style: italic;
+            color: var(--admin-text-medium);
+        }
+
+         /* --- Responsive Adjustments --- */
+         @media (min-width: 768px) {
+             .admin-list-item {
+                 flex-direction: row; /* Repasser en ligne sur écran large */
+                 justify-content: space-between;
+                 align-items: flex-start; /* Aligner en haut */
+             }
+             .item-info {
+                 flex-grow: 1;
+                 margin-right: 20px; /* Espace avant les boutons */
+             }
+             .item-actions {
+                 margin-top: 0;
+                 flex-shrink: 0; /* Empêcher les boutons de rétrécir */
+                 flex-wrap: nowrap;
+             }
+         }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Administration - Numéros Utiles</h1>
+    </header>
+
+    <main>
+        <!-- Section Gestion Bandeau Info -->
+        <section class="admin-section" id="info-banner-section">
+            <h2>Gestion du Bandeau d'Information</h2>
+            <form id="info-banner-form">
+                 <label for="banner-text-input">Texte du bandeau (laisser vide pour ne rien afficher) :</label>
+                 <textarea id="banner-text-input" rows="3" placeholder="Entrez un court message d'information ici..."></textarea>
+                 <button type="submit" id="save-banner-btn">Enregistrer le Bandeau</button>
+            </form>
+            <div id="banner-status-message" class="status-message"></div>
+        </section>
+
+        <!-- Section Ajout/Modification Numéro -->
+        <section class="admin-section" id="form-section">
+            <h2 id="form-title">Ajouter un Nouveau Numéro</h2>
+            <form id="add-edit-form">
+                <input type="hidden" id="edit-key">
+                <div>
+                    <label for="name-input">Nom du service :</label>
+                    <input type="text" id="name-input" required>
+                </div>
+                <div>
+                    <label for="number-input">Numéro de téléphone :</label>
+                    <input type="tel" id="number-input" placeholder="Ex: 117, 7302, +229XXXXXXXX" required>
+                </div>
+                <div>
+                    <label for="description-input">Description :</label>
+                    <textarea id="description-input" placeholder="Courte description du service ou du numéro..." rows="3"></textarea>
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" id="submit-btn">Ajouter</button>
+                    <button type="button" id="cancel-edit-btn" style="display: none;">Annuler Modification</button>
+                </div>
+            </form>
+            <div id="status-message" class="status-message"></div>
+        </section>
+
+        <!-- Section Liste des Numéros -->
+        <section class="admin-section" id="admin-list-container">
+            <h2>Liste des Numéros Actuels</h2>
+            <div id="admin-loading">Chargement de la liste... <span role="img" aria-label="loading icon">⏳</span></div>
+            <ul id="admin-list">
+                <!-- Liste admin injectée ici -->
+            </ul>
+            <div id="admin-no-data" style="display: none;">Aucun numéro enregistré pour le moment.</div>
+        </section>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+
+    <script>
+        // Votre configuration Firebase
+        const firebaseConfig = {
+          apiKey: "AIzaSyBu-9_wJzdxMWw7u13T_QaC5AHNvi3RGmU",
+          authDomain: "ussd-code-benin.firebaseapp.com",
+          databaseURL: "https://ussd-code-benin-default-rtdb.firebaseio.com",
+          projectId: "ussd-code-benin",
+          storageBucket: "ussd-code-benin.appspot.com",
+          messagingSenderId: "340500358688",
+          appId: "1:340500358688:web:74f337e2fdb60b7ee33e45",
+          measurementId: "G-EW9Y8P032C"
+        };
+
+        // Initialiser Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const emergencyNumbersRef = database.ref('emergency_numbers');
+        const infoBannerRef = database.ref('info_banner'); // Référence au nœud parent du bandeau
+
+        // Références DOM
+        const addEditForm = document.getElementById('add-edit-form');
+        const nameInput = document.getElementById('name-input');
+        const numberInput = document.getElementById('number-input');
+        const descriptionInput = document.getElementById('description-input'); // Nouveau champ
+        const editKeyInput = document.getElementById('edit-key');
+        const submitBtn = document.getElementById('submit-btn');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+        const formTitle = document.getElementById('form-title');
+        const adminList = document.getElementById('admin-list');
+        const statusMessage = document.getElementById('status-message');
+        const adminLoading = document.getElementById('admin-loading');
+        const adminNoData = document.getElementById('admin-no-data');
+
+        // DOM pour le bandeau info
+        const infoBannerForm = document.getElementById('info-banner-form');
+        const bannerTextInput = document.getElementById('banner-text-input');
+        const bannerStatusMessage = document.getElementById('banner-status-message');
+
+        // --- Fonctions Utilitaires ---
+        function showStatus(message, isError = false, elementId = 'status-message') {
+            const targetElement = document.getElementById(elementId);
+            if (!targetElement) return;
+            targetElement.textContent = message;
+            targetElement.className = `status-message ${isError ? 'error' : 'success'}`;
+            targetElement.style.display = 'block';
+            setTimeout(() => {
+                targetElement.style.display = 'none';
+            }, 5000);
+        }
+
+        function resetForm() {
+            addEditForm.reset(); // Ceci réinitialise tous les champs du formulaire
+            editKeyInput.value = '';
+            formTitle.textContent = 'Ajouter un Nouveau Numéro';
+            submitBtn.textContent = 'Ajouter';
+            cancelEditBtn.style.display = 'none';
+        }
+
+        // --- Gestion Bandeau Info ---
+        // Charger la valeur actuelle au démarrage
+        infoBannerRef.child('text').once('value', snapshot => {
+            bannerTextInput.value = snapshot.val() || '';
+        });
+
+        // Sauvegarder le texte du bandeau
+        infoBannerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newText = bannerTextInput.value.trim();
+            infoBannerRef.set({ text: newText }) // Utilise set pour écraser/définir la valeur
+                .then(() => {
+                    showStatus("Texte du bandeau mis à jour avec succès !", false, 'banner-status-message');
+                })
+                .catch(error => {
+                    console.error("Erreur de mise à jour du bandeau:", error);
+                    showStatus("Erreur lors de la mise à jour du bandeau.", true, 'banner-status-message');
+                });
+        });
+
+
+        // --- Gestion Formulaire Ajout/Modification Numéro ---
+        addEditForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = nameInput.value.trim();
+            const number = numberInput.value.trim();
+            const description = descriptionInput.value.trim(); // Récupérer la description
+            const key = editKeyInput.value;
+
+            if (!name || !number) { // Description optionnelle
+                showStatus("Le nom et le numéro sont requis.", true);
+                return;
+            }
+
+            const data = { name, number, description }; // Inclure la description
+
+            if (key) {
+                // Mode Modification
+                emergencyNumbersRef.child(key).update(data)
+                    .then(() => {
+                        showStatus("Numéro mis à jour avec succès !");
+                        resetForm();
+                    })
+                    .catch(error => {
+                        console.error("Erreur de mise à jour:", error);
+                        showStatus("Erreur lors de la mise à jour.", true);
+                    });
+            } else {
+                // Mode Ajout
+                emergencyNumbersRef.push(data)
+                    .then(() => {
+                        showStatus("Numéro ajouté avec succès !");
+                        resetForm();
+                    })
+                    .catch(error => {
+                        console.error("Erreur d'ajout:", error);
+                        showStatus("Erreur lors de l'ajout.", true);
+                    });
+            }
+        });
+
+        // Bouton Annuler Modification
+        cancelEditBtn.addEventListener('click', () => {
+            resetForm();
+        });
+
+        // --- Affichage et Gestion de la Liste Admin ---
+        emergencyNumbersRef.on('value', (snapshot) => {
+            adminLoading.style.display = 'none';
+            adminList.innerHTML = '';
+            adminNoData.style.display = 'none';
+
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const numbersArray = Object.keys(data).map(key => ({
+                    id: key,
+                    ...data[key]
+                })).sort((a, b) => a.name.localeCompare(b.name)); // Tri par nom
+
+                if (numbersArray.length === 0) {
+                    adminNoData.style.display = 'block';
+                } else {
+                    numbersArray.forEach(item => {
+                        const li = document.createElement('li');
+                        li.classList.add('admin-list-item');
+                        const descriptionText = item.description || ''; // Description vide si non définie
+
+                        li.innerHTML = `
+                            <div class="item-info">
+                                <span class="name">${item.name}</span>
+                                <span class="number">${item.number}</span>
+                                <p class="description">${descriptionText || '<i>(Pas de description)</i>'}</p>
+                            </div>
+                            <div class="item-actions">
+                                <button class="edit-btn" data-key="${item.id}" data-name="${item.name}" data-number="${item.number}" data-description="${descriptionText}">Modifier</button>
+                                <button class="delete-btn" data-key="${item.id}">Supprimer</button>
+                            </div>
+                        `;
+                        adminList.appendChild(li);
+                    });
+                }
+            } else {
+                adminNoData.style.display = 'block';
+            }
+        }, (error) => {
+            console.error("Erreur de lecture admin:", error);
+            adminLoading.style.display = 'none';
+            adminList.innerHTML = '<li class="admin-list-item" style="color: red; justify-content: center;">Erreur lors du chargement de la liste.</li>';
+        });
+
+        // --- Délégation d'événements pour les boutons Modifier/Supprimer ---
+        adminList.addEventListener('click', (e) => {
+            const target = e.target;
+
+            // Bouton Modifier
+            if (target.classList.contains('edit-btn')) {
+                const key = target.dataset.key;
+                const name = target.dataset.name;
+                const number = target.dataset.number;
+                const description = target.dataset.description; // Récupérer la description
+
+                // Remplir le formulaire
+                editKeyInput.value = key;
+                nameInput.value = name;
+                numberInput.value = number;
+                descriptionInput.value = description; // Remplir la textarea
+
+                // Changer l'état du formulaire
+                formTitle.textContent = 'Modifier le Numéro';
+                submitBtn.textContent = 'Mettre à jour';
+                cancelEditBtn.style.display = 'inline-block';
+
+                // Scroll vers le formulaire
+                formTitle.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                nameInput.focus();
+            }
+
+            // Bouton Supprimer
+            if (target.classList.contains('delete-btn')) {
+                const key = target.dataset.key;
+                const itemName = target.closest('.admin-list-item').querySelector('.name').textContent;
+
+                if (confirm(`Êtes-vous sûr de vouloir supprimer "${itemName}" ? Cette action est irréversible.`)) {
+                    emergencyNumbersRef.child(key).remove()
+                        .then(() => {
+                            showStatus(`"${itemName}" supprimé avec succès.`);
+                             if (editKeyInput.value === key) { // Si on éditait cet élément, reset le form
+                                resetForm();
+                             }
+                        })
+                        .catch(error => {
+                            console.error("Erreur de suppression:", error);
+                            showStatus("Erreur lors de la suppression.", true);
+                        });
+                }
+            }
+        });
+
+    </script>
+
+</body>
+</html>

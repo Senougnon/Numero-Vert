@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Numéros Utiles - Bénin</title>
+    <link rel="icon" href="logo.png" type="image/png">
+    <style>
+        /* --- Reset & Base --- */
+        :root {
+            --primary-color: #00796b; /* Vert Bénin */
+            --secondary-color: #ffc107; /* Jaune Bénin */
+            --accent-color: #d32f2f; /* Rouge Bénin (pourrait être utilisé pour accents) */
+            --background-light: #f4f7f6;
+            --background-white: #ffffff;
+            --text-dark: #212121;
+            --text-medium: #5f6368;
+            --text-light: #ffffff;
+            --border-color: #e0e0e0;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --whatsapp-color: #25D366;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-bottom: 80px; /* Espace pour le bouton flottant */
+        }
+
+        /* --- Header --- */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #004d40); /* Dégradé vert */
+            color: var(--text-light);
+            padding: 20px 15px;
+            text-align: center;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-size: 1.6em;
+            margin: 0;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        /* --- Info Banner --- */
+        #info-banner {
+            background-color: var(--secondary-color);
+            color: var(--text-dark);
+            padding: 12px 15px;
+            text-align: center;
+            font-size: 0.95em;
+            margin: 0; /* Collé au header */
+            box-shadow: 0 1px 3px var(--shadow-color);
+            display: none; /* Caché par défaut, affiché par JS si contenu */
+            z-index: 99;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        #info-banner p {
+            margin: 0;
+        }
+
+        /* --- Main Content --- */
+        main {
+            padding: 20px 15px;
+            flex-grow: 1;
+        }
+
+        /* --- Loading & No Data --- */
+        #loading, #no-data {
+            text-align: center;
+            padding: 40px 15px;
+            font-style: italic;
+            color: var(--text-medium);
+            font-size: 1.1em;
+        }
+
+        /* --- Emergency List --- */
+        #emergency-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .emergency-item {
+            background-color: var(--background-white);
+            border-radius: 12px;
+            margin-bottom: 18px;
+            box-shadow: 0 3px 10px var(--shadow-color);
+            overflow: hidden; /* Pour les coins arrondis */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        .emergency-item:hover { /* Effet subtil sur desktop */
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .item-content {
+            padding: 18px;
+        }
+
+        .item-details .name {
+            font-weight: 600;
+            font-size: 1.2em;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .item-details .description {
+            font-size: 0.95em;
+            color: var(--text-medium);
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .item-details .number {
+            font-size: 1.1em;
+            color: var(--text-dark);
+            font-weight: 500;
+            background-color: #e0f2f1; /* Fond léger pour numéro révélé */
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block; /* Pour le padding/background */
+            margin-top: 10px;
+            border: 1px solid #b2dfdb;
+            transition: all 0.3s ease;
+        }
+
+        .item-actions {
+            background-color: #f9f9f9; /* Section action légèrement différente */
+            padding: 12px 18px;
+            border-top: 1px solid var(--border-color);
+            text-align: right;
+        }
+
+        .call-button {
+            display: inline-flex; /* Pour aligner icône et texte */
+            align-items: center;
+            background: linear-gradient(135deg, var(--secondary-color), #ffb300);
+            color: var(--text-dark);
+            padding: 10px 20px;
+            border-radius: 25px; /* Bouton pilule */
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1em;
+            text-align: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            border: none;
+            cursor: pointer;
+        }
+
+        .call-button svg { /* Style pour une éventuelle icône SVG */
+             margin-right: 8px;
+             width: 16px;
+             height: 16px;
+             fill: currentColor;
+        }
+
+        .call-button:hover,
+        .call-button:focus {
+            background: linear-gradient(135deg, #ffca28, #ffb300);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            outline: none;
+        }
+
+        .call-button:active {
+             transform: scale(0.97);
+             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Classe pour cacher le numéro initialement */
+        .number.hidden {
+            display: none;
+        }
+
+        /* --- WhatsApp Floating Button --- */
+        #whatsapp-contact {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--whatsapp-color);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            z-index: 1000;
+            transition: transform 0.2s ease-out;
+        }
+
+        #whatsapp-contact:hover {
+             transform: scale(1.1);
+             background-color: #128C7E; /* Darker WhatsApp green */
+        }
+
+        #whatsapp-contact svg {
+            width: 30px;
+            height: 30px;
+            fill: white;
+        }
+
+        /* --- Footer --- */
+         footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            font-size: 0.85em;
+            color: var(--text-medium);
+            background-color: #e0e0e0;
+            border-top: 1px solid #bdbdbd;
+         }
+
+         /* --- Responsive Adjustments --- */
+         @media (min-width: 600px) {
+            body {
+                 padding-bottom: 20px; /* Moins d'espace en bas sur desktop */
+            }
+            main {
+                 max-width: 700px;
+                 margin: 0 auto; /* Centrer le contenu principal */
+                 padding: 30px 20px;
+            }
+            header h1 {
+                font-size: 2em;
+            }
+            .emergency-item {
+                display: flex;
+                align-items: stretch; /* Faire en sorte que les enfants aient la même hauteur */
+                margin-bottom: 20px;
+            }
+            .item-content {
+                flex-grow: 1;
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+            .item-details .name {
+                font-size: 1.3em;
+            }
+            .item-details .description {
+                font-size: 1em;
+                flex-grow: 1; /* Prend l'espace restant */
+                margin-bottom: 0; /* Plus de marge en bas */
+            }
+             .item-details .number {
+                font-size: 1.2em;
+                margin-top: 15px;
+            }
+            .item-actions {
+                 flex-shrink: 0; /* Ne pas rétrécir la section action */
+                 width: 150px; /* Largeur fixe pour les actions */
+                 display: flex;
+                 flex-direction: column;
+                 justify-content: center; /* Centrer le bouton verticalement */
+                 align-items: center; /* Centrer le bouton horizontalement */
+                 border-top: none;
+                 border-left: 1px solid var(--border-color);
+                 background-color: var(--background-white); /* Même fond que le contenu */
+                 padding: 20px;
+            }
+             .call-button {
+                 padding: 12px 25px;
+                 font-size: 1em;
+             }
+            #whatsapp-contact {
+                 width: 65px;
+                 height: 65px;
+                 bottom: 30px;
+                 right: 30px;
+            }
+            #whatsapp-contact svg {
+                 width: 35px;
+                 height: 35px;
+            }
+         }
+         /* Style pour quand le numéro est révélé */
+         .emergency-item.number-revealed .number {
+             display: inline-block;
+         }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Numéros Utiles - Bénin</h1>
+    </header>
+
+    <div id="info-banner">
+        <p id="info-banner-text">Chargement des informations...</p>
+    </div>
+
+    <main>
+        <div id="loading">Chargement des numéros... <span role="img" aria-label="loading icon">⏳</span></div>
+        <ul id="emergency-list">
+            <!-- Les numéros seront injectés ici par JavaScript -->
+        </ul>
+        <div id="no-data" style="display: none;">Aucun numéro d'urgence trouvé pour le moment.</div>
+    </main>
+
+    <footer>
+        Application des numéros d'urgence du Bénin - Restez prudents !
+    </footer>
+
+    <!-- Bouton Flottant WhatsApp -->
+    <a href="https://wa.me/+2290160374877" id="whatsapp-contact" target="_blank" rel="noopener noreferrer" title="Contacter l'administrateur via WhatsApp">
+        <!-- Icône SVG WhatsApp -->
+        <svg viewBox="0 0 32 32"><path d=" M19.11 17.205c-.372 0-1.088 1.39-1.518 1.39a.63.63 0 0 1-.315-.1c-.802-.402-1.504-.817-2.163-1.447-.545-.516-1.146-1.29-1.46-1.963a.426.426 0 0 1-.073-.215c0-.33.99-.945.99-1.49 0-.143-.73-2.09-.832-2.335-.143-.372-.214-.487-.6-.487-.187 0-.36-.044-.53-.044-.3 0-.53.107-.68.227-.17.137-.37.319-.6-.1.25-.28.35-.39.47-.52.11-.11.18-.2.25-.32.07-.12.07-.25.04-.38-.04-.13-.11-.23-.2-.3-.09-.08-.2-.13-.34-.17-.14-.04-.3-.04-.48-.04-.2 0-.43.04-.66.13-.23.09-.43.22-.6.38-.18.16-.33.35-.45.58-.12.23-.18.48-.18.75s.06.55.18.83c.12.28.28.53.48.75.2.23.45.43.75.6.3.18.63.32.98.42.36.1.73.15 1.13.15.47 0 .9-.05 1.28-.15.38-.09.7-.22 1.05-.4L16 18.2c.34-.17.73-.38 1.19-.62.46-.24.9-.5 1.3-.76.4-.27.75-.57 1.02-.9.27-.33.47-.67.6-1.02.1-.3.1-.6.05-.87-.04-.27-.12-.52-.23-.75-.12-.23-.28-.43-.48-.6-.2-.17-.45-.32-.73-.45-.28-.13-.6-.2-.98-.2-.2 0-.4.03-.58.08-.18.05-.35.14-.48.25-.13.12-.23.26-.3.43-.07.17-.1.35-.1.56 0 .2.06.4.18.6.12.2.28.38.48.52.2.14.45.23.75.28.3.05.63.04 1.02-.04.4-.09.75-.22 1.05-.41.3-.19.53-.4.7-.62.18-.23.3-.48.36-.75.07-.27.07-.53.03-.76-.04-.23-.12-.44-.24-.62-.12-.18-.27-.33-.45-.45-.18-.12-.38-.2-.6-.24-.22-.04-.45-.04-.7-.04zm-6.48 4.958c-.07.15-.18.28-.3.38-.12.1-.27.16-.42.18-.15.02-.3.02-.43-.02-.13-.04-.25-.09-.35-.16-.1-.07-.18-.15-.25-.25-.07-.1-.13-.2-.15-.33-.03-.13-.04-.26-.04-.4 0-.15.02-.3.07-.43.05-.13.13-.25.23-.35.1-.1.22-.18.35-.23.13-.05.27-.07.43-.07.15 0 .3.03.43.07.13.05.25.13.35.23.1.1.18.22.23.35.05.13.07.28.07.43 0 .14-.02.28-.07.4-.04.13-.1.25-.18.36zm8.96-1.377c-.08.12-.18.23-.3.3-.12.08-.27.12-.42.13-.15.02-.3.02-.45-.02-.15-.04-.28-.09-.4-.18-.1-.08-.18-.18-.25-.3-.08-.1-.13-.23-.16-.36-.03-.13-.04-.27-.04-.42 0-.15.02-.3.07-.44.05-.14.13-.27.23-.37.1-.1.22-.18.35-.24.13-.05.28-.08.43-.08.15 0 .3.03.44.08.14.05.27.13.37.24.1.1.18.22.23.36.05.14.08.3.08.46 0 .15-.03.3-.08.44-.05.13-.12.25-.2.36z M22 6l-3-3h-7c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V9l-3-3zm-2 13H12v-2h8v2zm0-4H12v-2h8v2zm-3-5V5.5l3.5 3.5H17z"></path></svg>
+    </a>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+
+    <script>
+        // Votre configuration Firebase
+        const firebaseConfig = {
+          apiKey: "AIzaSyBu-9_wJzdxMWw7u13T_QaC5AHNvi3RGmU",
+          authDomain: "ussd-code-benin.firebaseapp.com",
+          databaseURL: "https://ussd-code-benin-default-rtdb.firebaseio.com",
+          projectId: "ussd-code-benin",
+          storageBucket: "ussd-code-benin.appspot.com",
+          messagingSenderId: "340500358688",
+          appId: "1:340500358688:web:74f337e2fdb60b7ee33e45",
+          measurementId: "G-EW9Y8P032C"
+        };
+
+        // Initialiser Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const emergencyNumbersRef = database.ref('emergency_numbers');
+        const infoBannerRef = database.ref('info_banner/text'); // Chemin pour le texte du bandeau
+
+        // Références DOM
+        const emergencyList = document.getElementById('emergency-list');
+        const loadingDiv = document.getElementById('loading');
+        const noDataDiv = document.getElementById('no-data');
+        const infoBanner = document.getElementById('info-banner');
+        const infoBannerText = document.getElementById('info-banner-text');
+
+        // --- Affichage Bandeau d'Information ---
+        infoBannerRef.on('value', (snapshot) => {
+            const text = snapshot.val();
+            if (text && text.trim() !== '') {
+                infoBannerText.textContent = text;
+                infoBanner.style.display = 'block';
+            } else {
+                infoBanner.style.display = 'none';
+            }
+        }, (error) => {
+            console.error("Erreur de lecture du bandeau info:", error);
+            infoBanner.style.display = 'none';
+        });
+
+        // --- Affichage Liste des Numéros ---
+        emergencyNumbersRef.on('value', (snapshot) => {
+            loadingDiv.style.display = 'none';
+            emergencyList.innerHTML = '';
+            noDataDiv.style.display = 'none';
+
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const numbersArray = Object.keys(data).map(key => ({
+                    id: key,
+                    ...data[key]
+                })).sort((a, b) => a.name.localeCompare(b.name)); // Tri par nom
+
+                if (numbersArray.length === 0) {
+                     noDataDiv.style.display = 'block';
+                } else {
+                    numbersArray.forEach(item => {
+                        const listItem = document.createElement('li');
+                        listItem.classList.add('emergency-item');
+                        listItem.dataset.key = item.id; // Ajouter la clé pour référence future
+
+                        // Gestion de la description (utiliser une chaîne vide si absente)
+                        const description = item.description || "Pas de description disponible.";
+
+                        // Nettoyage et formatage du numéro pour le lien tel:
+                        let rawNumber = item.number.trim();
+                        let telNumber = rawNumber.replace(/\s+/g, ''); // Enlever les espaces
+                        if (!telNumber.startsWith('+') && /^\d{8}$/.test(telNumber)) { // Numéro local 8 chiffres
+                            telNumber = '+229' + telNumber;
+                        }
+                         // Assurer le préfixe tel: uniquement pour le href
+                         let telHref = telNumber.startsWith('tel:') ? telNumber : 'tel:' + telNumber;
+
+
+                        listItem.innerHTML = `
+                            <div class="item-content">
+                                <div class="item-details">
+                                    <span class="name">${item.name}</span>
+                                    <p class="description">${description}</p>
+                                    <span class="number hidden">${rawNumber}</span>
+                                </div>
+                                <div class="item-actions">
+                                     <button class="call-button" data-tel="${telHref}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18px" height="18px" style="margin-right: 8px;"><path d="M0 0h24v24H0z" fill="none"/><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                                        Appeler
+                                     </button>
+                                </div>
+                            </div>
+                        `;
+                        emergencyList.appendChild(listItem);
+                    });
+
+                    // Ajouter les écouteurs d'événements APRÈS avoir ajouté les éléments au DOM
+                    attachCallButtonListeners();
+                }
+            } else {
+                noDataDiv.style.display = 'block';
+            }
+        }, (error) => {
+            console.error("Erreur de lecture depuis Firebase:", error);
+            loadingDiv.style.display = 'none';
+            emergencyList.innerHTML = '<li class="emergency-item" style="color: red; justify-content: center; padding: 20px; text-align: center;">Erreur lors du chargement des numéros. Vérifiez votre connexion ou contactez l\'administrateur.</li>';
+        });
+
+        // --- Gestion Clic Bouton "Appeler" ---
+        function attachCallButtonListeners() {
+            const callButtons = document.querySelectorAll('.call-button');
+            callButtons.forEach(button => {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault(); // Empêcher le comportement par défaut si c'est un lien <a>
+
+                    const listItem = this.closest('.emergency-item');
+                    const numberSpan = listItem.querySelector('.number');
+                    const telLink = this.dataset.tel; // Récupérer le lien tel: depuis l'attribut data
+
+                    // Révéler le numéro
+                    if (numberSpan) {
+                        numberSpan.classList.remove('hidden');
+                        listItem.classList.add('number-revealed'); // Ajoute une classe pour styliser si besoin
+                    }
+
+                    // Optionnel : Changer le texte du bouton après clic (peut être perturbant)
+                    // this.textContent = 'Numéro : ' + (numberSpan ? numberSpan.textContent : '...');
+
+                    // Lancer l'appel
+                    if (telLink) {
+                        // Petit délai pour laisser l'utilisateur voir le numéro avant l'appel
+                        setTimeout(() => {
+                             window.location.href = telLink;
+                        }, 300); // 300ms de délai
+                    } else {
+                        console.error("Lien 'tel:' non trouvé pour ce bouton.");
+                        alert("Erreur : Impossible de lancer l'appel pour ce numéro.");
+                    }
+                });
+            });
+        }
+
+    </script>
+
+</body>
+</html>
